@@ -50,16 +50,23 @@ const mockTeamMembers = [
 function App() {
   const [selectedTask, setSelectedTask] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleTaskSelect = (task) => {
     setSelectedTask(task);
-    // Simulate suggestion generation
-    const mockSuggestions = mockTeamMembers.map(member => ({
-      member,
-      confidence: Math.random() * 100,
-      reason: `Based on ${member.expertise.join(', ')} expertise`
-    })).sort((a, b) => b.confidence - a.confidence);
-    setSuggestions(mockSuggestions);
+    setIsProcessing(true);
+    setSuggestions([]); // Clear previous suggestions
+    
+    // Simulate processing delay
+    setTimeout(() => {
+      const mockSuggestions = mockTeamMembers.map(member => ({
+        member,
+        confidence: Math.random() * 100,
+        reason: `Based on ${member.expertise.join(', ')} expertise`
+      })).sort((a, b) => b.confidence - a.confidence);
+      setSuggestions(mockSuggestions);
+      setIsProcessing(false);
+    }, 2500); // 2.5 second delay for effect
   };
 
   return (
@@ -111,6 +118,32 @@ function App() {
           )}
         </div>
       </div>
+
+      {/* Processing Popup */}
+      {isProcessing && (
+        <div className="processing-overlay">
+          <div className="processing-popup">
+            <div className="processing-content">
+              <div className="processing-spinner"></div>
+              <h3>Processing Task</h3>
+              <div className="processing-steps">
+                <div className="step-item">
+                  <div className="step-dot active"></div>
+                  <span>Analyzing task requirements...</span>
+                </div>
+                <div className="step-item">
+                  <div className="step-dot"></div>
+                  <span>Matching team expertise...</span>
+                </div>
+                <div className="step-item">
+                  <div className="step-dot"></div>
+                  <span>Generating suggestions...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
