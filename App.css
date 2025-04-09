@@ -93,26 +93,25 @@ h2 {
   font-weight: 500;
 }
 
-.priority.high {
+.priority.critical {
   background-color: #fee2e2;
   color: #dc2626;
 }
 
-.priority.medium {
+.priority.major {
   background-color: #fef3c7;
   color: #d97706;
 }
 
-.priority.low {
-  background-color: #dcfce7;
-  color: #16a34a;
+.task-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
 }
 
-.task-type {
-  display: inline-block;
-  margin-top: 0.5rem;
-  padding: 0.25rem 0.5rem;
+.task-type, .task-status {
   background-color: var(--background-color);
+  padding: 0.25rem 0.5rem;
   border-radius: 4px;
   font-size: 0.875rem;
 }
@@ -150,24 +149,75 @@ h2 {
   margin-bottom: 1rem;
 }
 
-.assign-button {
+.similar-tasks {
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: #f8fafc;
+  border-radius: 4px;
+}
+
+.similar-tasks h4 {
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.similar-tasks ul {
+  list-style: none;
+  padding: 0;
+}
+
+.similar-tasks li {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+  padding-left: 1rem;
+  position: relative;
+}
+
+.similar-tasks li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--primary-color);
+}
+
+.button-group {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.propose-button {
   background-color: var(--primary-color);
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.5rem;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
+  flex: 1;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-.assign-button:hover {
+.propose-button:hover {
   background-color: var(--secondary-color);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.no-selection {
-  text-align: center;
-  color: #64748b;
-  padding: 2rem;
+.propose-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.propose-button:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
 }
 
 .processing-overlay {
@@ -197,12 +247,6 @@ h2 {
 
 .processing-content {
   text-align: center;
-}
-
-.processing-content h3 {
-  color: var(--primary-color);
-  margin: 1rem 0;
-  font-size: 1.5rem;
 }
 
 .processing-spinner {
@@ -333,45 +377,116 @@ h2 {
   text-transform: uppercase;
 }
 
-.priority.critical {
-  background-color: #fee2e2;
-  color: #dc2626;
-}
-
-.priority.major {
+.priority.high {
   background-color: #fef3c7;
   color: #d97706;
 }
 
-.similar-tasks {
-  margin: 1rem 0;
-  padding: 1rem;
-  background-color: #f8fafc;
+.priority.medium {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.priority.low {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.task-type {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  background-color: var(--background-color);
   border-radius: 4px;
-}
-
-.similar-tasks h4 {
-  color: var(--primary-color);
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-}
-
-.similar-tasks ul {
-  list-style: none;
-  padding: 0;
-}
-
-.similar-tasks li {
   font-size: 0.875rem;
+}
+
+.assign-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.assign-button:hover {
+  background-color: var(--secondary-color);
+}
+
+.no-selection {
+  text-align: center;
   color: #64748b;
-  margin-bottom: 0.5rem;
-  padding-left: 1rem;
+  padding: 2rem;
+}
+
+.propose-button.sending {
+  background-color: #94a3b8;
+  cursor: not-allowed;
   position: relative;
 }
 
-.similar-tasks li::before {
-  content: "•";
+.propose-button.sending::after {
+  content: '';
   position: absolute;
+  top: 0;
   left: 0;
-  color: var(--primary-color);
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: loading-shine 1.5s infinite;
+}
+
+@keyframes loading-shine {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Add these new styles */
+.button-group {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.propose-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.propose-button:hover {
+  background-color: var(--secondary-color);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.propose-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.propose-button:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
 } 

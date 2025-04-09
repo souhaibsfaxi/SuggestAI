@@ -140,6 +140,77 @@ function App() {
     }, 2500);
   };
 
+  const handleProposeAssignment = (task, suggestion) => {
+    // Email recipients
+    const to = ['souhaib.sfaxi@fisglobal.com', 'elyes.fessi@gmail.com'];
+    
+    // Create email subject
+    const subject = `Task Assignment Proposal: ${task.id}`;
+    
+    // Create email body in HTML format
+    const emailBody = `
+      <html>
+        <body>
+          <h1>Task Assignment Proposal</h1>
+          
+          <h2>Task Details</h2>
+          <p><strong>Task ID:</strong> ${task.id}</p>
+          <p><strong>Title:</strong> ${task.title}</p>
+          <p><strong>Type:</strong> ${task.type}</p>
+          <p><strong>Priority:</strong> ${task.priority}</p>
+          <p><strong>Status:</strong> ${task.status}</p>
+          
+          <h2>Suggested Assignee</h2>
+          <p><strong>Name:</strong> ${suggestion.member.name}</p>
+          <p><strong>Confidence Score:</strong> ${suggestion.confidence.toFixed(1)}%</p>
+          <p><strong>Reason:</strong> ${suggestion.reason}</p>
+          
+          <h3>Similar Tasks History:</h3>
+          <ul>
+            ${suggestion.member.expertise.map(task => `<li>${task}</li>`).join('')}
+          </ul>
+          
+          <p>Please review this suggestion and take appropriate action.</p>
+        </body>
+      </html>
+    `;
+
+    // Create mailto URL
+    const mailtoLink = `mailto:${to.join(',')}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+
+    // Open email client
+    window.location.href = mailtoLink;
+  };
+
+  const renderSuggestionCard = (suggestion) => (
+    <div key={suggestion.member.id} className="suggestion-card">
+      <div className="suggestion-header">
+        <h3>{suggestion.member.name}</h3>
+        <span className="confidence-score">
+          {suggestion.confidence.toFixed(1)}% match
+        </span>
+      </div>
+      <p className="member-role">{suggestion.member.role}</p>
+      <p className="suggestion-reason">{suggestion.reason}</p>
+      <div className="similar-tasks">
+        <h4>Similar Tasks:</h4>
+        <ul>
+          {suggestion.member.expertise.map((task, idx) => (
+            <li key={idx}>{task}</li>
+          ))}
+        </ul>
+      </div>
+      <div className="button-group">
+        <button 
+          className="propose-button"
+          onClick={() => handleProposeAssignment(selectedTask, suggestion)}
+        >
+          Propose to Assign Task
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="app">
       <header className="app-header">
@@ -173,27 +244,7 @@ function App() {
           <h2>Assignment Suggestions</h2>
           {selectedTask ? (
             <div className="suggestions-list">
-              {suggestions.map((suggestion, index) => (
-                <div key={suggestion.member.id} className="suggestion-card">
-                  <div className="suggestion-header">
-                    <h3>{suggestion.member.name}</h3>
-                    <span className="confidence-score">
-                      {suggestion.confidence.toFixed(1)}% match
-                    </span>
-                  </div>
-                  <p className="member-role">{suggestion.member.role}</p>
-                  <p className="suggestion-reason">{suggestion.reason}</p>
-                  <div className="similar-tasks">
-                    <h4>Similar Tasks:</h4>
-                    <ul>
-                      {suggestion.member.expertise.map((task, idx) => (
-                        <li key={idx}>{task}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <button className="assign-button">Assign Task</button>
-                </div>
-              ))}
+              {suggestions.map(suggestion => renderSuggestionCard(suggestion))}
             </div>
           ) : (
             <p className="no-selection">Select a task to see suggestions</p>
