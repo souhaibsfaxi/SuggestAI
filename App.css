@@ -315,4 +315,63 @@ h2 {
     opacity: 1;
     transform: translateX(0);
   }
+}
+
+/* Add these new styles to your existing CSS */
+
+.task-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.task-status {
+  background-color: #e2e8f0;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+}
+
+.priority.critical {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.priority.major {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.similar-tasks {
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: #f8fafc;
+  border-radius: 4px;
+}
+
+.similar-tasks h4 {
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.similar-tasks ul {
+  list-style: none;
+  padding: 0;
+}
+
+.similar-tasks li {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+  padding-left: 1rem;
+  position: relative;
+}
+
+.similar-tasks li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--primary-color);
 } 

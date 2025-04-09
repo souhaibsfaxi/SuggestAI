@@ -1,51 +1,116 @@
 import React, { useState } from 'react';
 import './App.css';
 
-// Mock data
-const mockTasks = [
+// Transform JSON data into tasks format
+const tasks = Object.entries(
   {
-    id: 'TASK-1',
-    title: 'Implement user authentication',
-    description: 'Create a secure authentication system using JWT tokens',
-    priority: 'High',
-    type: 'Feature'
-  },
-  {
-    id: 'TASK-2',
-    title: 'Fix database connection issues',
-    description: 'Resolve timeout issues in database connections',
-    priority: 'Medium',
-    type: 'Bug'
-  },
-  {
-    id: 'TASK-3',
-    title: 'Add unit tests',
-    description: 'Implement test coverage for core functionality',
-    priority: 'Low',
-    type: 'Task'
+    "FISCDSOL-82544": {
+        "summary": "CH Template : Fail in CCP Account Group",
+        "issuetype": "Bug",
+        "status": "to do",
+        "priority": "Critical",
+        "top_people": [
+            {
+                "person": "Hassan, Hamdi",
+                "average_score": 0.9,
+                "relevant_summaries": [
+                    {
+                        "summary": "CH Template : Fail in CCP Account Group",
+                        "score": 1.0
+                    }
+                ]
+            },
+            {
+                "person": "MohamedAloui Fathallah",
+                "average_score": 0.5740464873164326,
+                "relevant_summaries": [
+                    {
+                        "summary": "CH Template : Account Group : Remove Capitalization ",
+                        "score": 0.5155017147300983
+                    },
+                    {
+                        "summary": "CH Template : Account Group Allocation : Validation",
+                        "score": 0.6024165835556816
+                    },
+                    {
+                        "summary": "CH Template : Clearing Account: Group Allocation",
+                        "score": 0.6042211636635177
+                    }
+                ]
+            }
+        ]
+    },
+    "FISCDSOL-82426": {
+        "summary": "Template UBIX : Account Relationships are not migrated to FCD",
+        "issuetype": "Bug",
+        "status": "to do",
+        "priority": "Major",
+        "top_people": []
+    },
+    "FISCDSOL-82306": {
+        "summary": "Export based API jobs not showing an error when a crash happens in server after some data has already been sent",
+        "issuetype": "Bug",
+        "status": "to do",
+        "priority": "Critical",
+        "top_people": [
+            {
+                "person": "Riadh Arous",
+                "average_score": 0.9,
+                "relevant_summaries": [
+                    {
+                        "summary": "Export based API jobs not showing an error when a crash happens in server after some data has already been sent",
+                        "score": 1.0
+                    }
+                ]
+            }
+        ]
+    },
+    "FISCDSOL-81812": {
+        "summary": "CH Template : Placeholder : Account Validation : Fix The Management of the same inbound Alias",
+        "issuetype": "Bug",
+        "status": "to do",
+        "priority": "Major",
+        "top_people": [
+            {
+                "person": "Hassan, Hamdi",
+                "average_score": 0.9,
+                "relevant_summaries": [
+                    {
+                        "summary": "CH Template : Placeholder : Account Validation : Fix The Management of the same inbound Alias",
+                        "score": 1.0
+                    }
+                ]
+            }
+        ]
+    },
+    "FISCDSOL-81811": {
+        "summary": "CH CV-GMI : [TS 3665265] : Account Validation : Fix The Management of the same inbound Alias",
+        "issuetype": "Bug",
+        "status": "to do",
+        "priority": "Major",
+        "top_people": [
+            {
+                "person": "Hassan, Hamdi",
+                "average_score": 0.6603733716476258,
+                "relevant_summaries": [
+                    {
+                        "summary": "CH Template : Placeholder : Account Validation : Fix The Management of the same inbound Alias",
+                        "score": 0.7337481907195842
+                    }
+                ]
+            }
+        ]
+    }
   }
-];
-
-const mockTeamMembers = [
-  {
-    id: 1,
-    name: 'John Doe',
-    role: 'Backend Developer',
-    expertise: ['Authentication', 'Database', 'API Development']
-  },
-  {
-    id: 2,
-    name: 'Jane Smith',
-    role: 'Frontend Developer',
-    expertise: ['React', 'UI/UX', 'Testing']
-  },
-  {
-    id: 3,
-    name: 'Mike Johnson',
-    role: 'Full Stack Developer',
-    expertise: ['Backend', 'Frontend', 'DevOps']
-  }
-];
+).map(([id, data]) => ({
+  id,
+  title: data.summary,
+  description: data.summary, // Using summary as description since we don't have separate descriptions
+  priority: data.priority,
+  type: data.issuetype,
+  status: data.status,
+  top_people: data.top_people
+}));
 
 function App() {
   const [selectedTask, setSelectedTask] = useState(null);
@@ -56,17 +121,23 @@ function App() {
     setSelectedTask(task);
     setIsProcessing(true);
     setSuggestions([]); // Clear previous suggestions
-    
-    // Simulate processing delay
+
+    // Simulate processing steps
     setTimeout(() => {
-      const mockSuggestions = mockTeamMembers.map(member => ({
-        member,
-        confidence: Math.random() * 100,
-        reason: `Based on ${member.expertise.join(', ')} expertise`
+      const suggestions = task.top_people.map(person => ({
+        member: {
+          id: person.person,
+          name: person.person,
+          role: "Team Member",
+          expertise: person.relevant_summaries.map(s => s.summary)
+        },
+        confidence: person.average_score * 100,
+        reason: `Based on ${person.relevant_summaries.length} similar task(s) with average match score of ${(person.average_score * 100).toFixed(1)}%`
       })).sort((a, b) => b.confidence - a.confidence);
-      setSuggestions(mockSuggestions);
+
+      setSuggestions(suggestions);
       setIsProcessing(false);
-    }, 2500); // 2.5 second delay for effect
+    }, 2500);
   };
 
   return (
@@ -78,7 +149,7 @@ function App() {
       <div className="app-content">
         <div className="task-list">
           <h2>Unassigned Tasks</h2>
-          {mockTasks.map(task => (
+          {tasks.map(task => (
             <div 
               key={task.id} 
               className={`task-card ${selectedTask?.id === task.id ? 'selected' : ''}`}
@@ -90,7 +161,10 @@ function App() {
               </div>
               <h3>{task.title}</h3>
               <p>{task.description}</p>
-              <span className="task-type">{task.type}</span>
+              <div className="task-footer">
+                <span className="task-type">{task.type}</span>
+                <span className="task-status">{task.status}</span>
+              </div>
             </div>
           ))}
         </div>
@@ -109,6 +183,14 @@ function App() {
                   </div>
                   <p className="member-role">{suggestion.member.role}</p>
                   <p className="suggestion-reason">{suggestion.reason}</p>
+                  <div className="similar-tasks">
+                    <h4>Similar Tasks:</h4>
+                    <ul>
+                      {suggestion.member.expertise.map((task, idx) => (
+                        <li key={idx}>{task}</li>
+                      ))}
+                    </ul>
+                  </div>
                   <button className="assign-button">Assign Task</button>
                 </div>
               ))}
@@ -125,9 +207,9 @@ function App() {
           <div className="processing-popup">
             <div className="processing-content">
               <div className="processing-spinner"></div>
-              <h3>Processing Task</h3>
+              <h3>Analyzing Task</h3>
               <div className="processing-steps">
-                <div className="step-item">
+                <div className="step-item active">
                   <div className="step-dot active"></div>
                   <span>Analyzing task requirements...</span>
                 </div>
@@ -137,7 +219,7 @@ function App() {
                 </div>
                 <div className="step-item">
                   <div className="step-dot"></div>
-                  <span>Generating suggestions...</span>
+                  <span>Calculating confidence scores...</span>
                 </div>
               </div>
             </div>
